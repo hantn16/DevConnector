@@ -20,7 +20,7 @@ const Login = ({login,isAuthenticated}) => {
   }
   return (
     <Fragment>
-      <div className="alert alert-danger">Invalid credentials</div>
+      {/* <div className="alert alert-danger">Invalid credentials</div> */}
       <h1 className="large text-primary">Sign In</h1>
       <p className="lead">
         <i className="fas fa-user"></i> Sign into Your Account

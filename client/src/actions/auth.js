@@ -1,14 +1,24 @@
 import axios from 'axios';
 import setAuthToken from '../utils/setAuthToken';
 import { setAlert } from './alert';
-import { REGISTER_SUCCESS, REGISTER_FAIL, USER_LOADED, AUTH_ERR, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT } from './type';
+import {
+  REGISTER_SUCCESS,
+  REGISTER_FAIL,
+  USER_LOADED,
+  AUTH_ERR,
+  LOGIN_SUCCESS,
+  LOGIN_FAIL,
+  LOGOUT,
+  CLEAR_PROFILE,
+} from './type';
 
 //load user
 export const loadUser = () => async (dispatch) => {
   try {
-    if (localStorage.token) {
-      setAuthToken(localStorage.token);
+    if (!localStorage.token) {
+      return dispatch({type: AUTH_ERR});
     }
+    setAuthToken(localStorage.token);
     const res = await axios.get('/api/auth');
     dispatch({
       type: USER_LOADED,
@@ -95,6 +105,7 @@ export const login = (email, password) => async (dispatch) => {
 };
 
 //logout & remove profiles
-export const logout = () => dispatch => {
-    dispatch({type: LOGOUT});
-}
+export const logout = () => (dispatch) => {
+  dispatch({ type: CLEAR_PROFILE });
+  dispatch({ type: LOGOUT });
+};
