@@ -38,13 +38,14 @@ const EditProfile = ({
       skills: loading || !profile.skills ? '' : profile.skills.join(','),
       bio: loading || !profile.bio ? '' : profile.bio,
       githubUserName:
-        loading || !profile.githubUserName ? '' : profile.social.githubUserName,
+        loading || !profile.githubUserName ? '' : profile.githubUserName,
       youtube: loading || !profile.social ? '' : profile.social.youtube,
       twitter: loading || !profile.social ? '' : profile.social.twitter,
       facebook: loading || !profile.social ? '' : profile.social.facebook,
       linkedin: loading || !profile.social ? '' : profile.social.linkedin,
       instagram: loading || !profile.social ? '' : profile.social.instagram,
     });
+  // eslint-disable-next-line
   }, [loading]);
   const {
     company,
