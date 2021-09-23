@@ -1,6 +1,5 @@
 {
-    "mongoURI":"mongodb+srv://admin:admin@devconnector.ycasz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-    "jwtSecret":"HanHue",
-    "githubClientId":"30b09416364392f10bde",
-    "githubClientSecret":"6045eaac336035875585198501b33d41b55d05f3"
+  "mongoURI": "mongodb+srv://admin:admin@devconnector.ycasz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+  "jwtSecret": "HanHue",
+  "githubToken": "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"
 }
