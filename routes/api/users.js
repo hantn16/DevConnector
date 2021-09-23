@@ -5,6 +5,7 @@ const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
+const normalize = require('normalize-url');
 const User = require('../../models/User');
 
 // @route   POST api/users
@@ -30,11 +31,14 @@ router.post(
           .json({ errors: [{ msg: 'User already exists' }] });
       }
       // Get user's gravatar
-      const avatar = gravatar.url(email, {
-        s: 200,
-        r: 'pg',
-        d: 'mm',
-      });
+      const avatar = normalize(
+        gravatar.url(email, {
+          s: 200,
+          r: 'pg',
+          d: 'mm',
+        }),
+        { forceHttps: true }
+      );
       user = new User({
         name,
         email,
@@ -45,14 +49,14 @@ router.post(
       user.password = await bcrypt.hash(password, 10);
       await user.save();
       // Return jsonwebtoken
-      const payload = {user:{id: user.id}};
+      const payload = { user: { id: user.id } };
       jwt.sign(
         payload,
         config.get('jwtSecret'),
         { expiresIn: 360000 },
         (err, token) => {
           if (err) throw err;
-          res.json({token});
+          res.json({ token });
         }
       );
     } catch (err) {
