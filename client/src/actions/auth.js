@@ -16,7 +16,7 @@ import {
 export const loadUser = () => async (dispatch) => {
   try {
     if (!localStorage.token) {
-      return dispatch({type: AUTH_ERR});
+      return dispatch({ type: AUTH_ERR });
     }
     setAuthToken(localStorage.token);
     const res = await axios.get('/api/auth');
@@ -105,6 +105,7 @@ export const login = (email, password) => async (dispatch) => {
 };
 
 //logout & remove profiles
+// export const logout = () => ({ type: LOGOUT });
 export const logout = () => (dispatch) => {
   dispatch({ type: CLEAR_PROFILE });
   dispatch({ type: LOGOUT });
