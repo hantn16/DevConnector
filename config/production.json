@@ -1,5 +1,0 @@
-{
-  "mongoURI": "mongodb+srv://admin:admin@devconnector.ycasz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-  "jwtSecret": "HanHue",
-  "githubToken": "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"
-}
