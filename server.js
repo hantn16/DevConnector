@@ -1,10 +1,17 @@
 const express = require('express');
-const connectDB = require('./config/db');
+const colors = require('colors');
 const path = require('path');
+
+const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
+// Load routes
+const auth = require('./routes/api/auth');
+const users = require('./routes/api/users');
+const profile = require('./routes/api/profile');
+const posts = require('./routes/api/posts');
 //Connect database
 connectDB();
 
@@ -12,10 +19,10 @@ connectDB();
 app.use(express.json({ extended: false }));
 
 //Define Routes
-app.use('/api/users', require('./routes/api/users'));
-app.use('/api/auth', require('./routes/api/auth'));
-app.use('/api/profile', require('./routes/api/profile'));
-app.use('/api/posts', require('./routes/api/posts'));
+app.use('/api/users', users);
+app.use('/api/auth', auth);
+app.use('/api/profile', profile);
+app.use('/api/posts', posts);
 
 //Handle Error
 app.use(errorHandler);
