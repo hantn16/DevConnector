@@ -207,19 +207,13 @@ exports.deleteEducation = asyncHandler(async (req, res, next) => {
 // @desc    Get github repos of user
 // @access  public
 exports.getGithubRepos = asyncHandler(async (req, res, next) => {
-  try {
-    const uri = encodeURI(
-      `https://api.github.com/users/${req.params.username}/repos?per_page=5&sort=created:asc`
-    );
-    const headers = {
-      'user-agent': 'node.js',
-      Authorization: `token ${process.env.GITHUB_TOKEN}`,
-    };
-    const gitHubResponse = await axios.get(uri, { headers });
-    return res.json(gitHubResponse.data);
-  } catch (err) {
-    return next(
-      new ErrorResponse('NotFoundError', 404, ['No Github profile found'])
-    );
-  }
+  const uri = encodeURI(
+    `https://api.github.com/users/${req.params.username}/repos?per_page=5&sort=created:asc`
+  );
+  const headers = {
+    'user-agent': 'node.js',
+    Authorization: `token ${process.env.GITHUB_TOKEN}`,
+  };
+  const gitHubResponse = await axios.get(uri, { headers });
+  return res.status(200).json(gitHubResponse.data);
 });

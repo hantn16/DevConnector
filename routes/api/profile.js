@@ -45,7 +45,7 @@ router.route('/experience').put(
 );
 router.route('/experience/:exp_id').delete(protect, deleteExperience);
 router.route('/education/:edu_id').delete(protect, deleteEducation);
-router.route('').put(
+router.route('/education').put(
   [
     protect,
     [
