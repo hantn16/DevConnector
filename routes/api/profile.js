@@ -1,5 +1,4 @@
 const express = require('express');
-const router = express.Router();
 const { check } = require('express-validator');
 const { protect } = require('../../middleware/auth');
 const {
@@ -12,24 +11,25 @@ const {
   updateEducation,
   deleteEducation,
   getGithubRepos,
+  createOrUpdateProfile,
 } = require('../../controllers/profiles');
 
-router.route('/me').get(protect, getMyProfile);
+const router = express.Router();
+
 router
   .route('/')
   .post(
+    protect,
     [
-      protect,
-      [
-        // Validator check
-        check('status', 'status is required').not().isEmpty(),
-        check('skills', 'skills is required').not().isEmpty(),
-      ],
+      // Validator check
+      check('status', 'status is required').not().isEmpty(),
+      check('skills', 'skills is required').not().isEmpty(),
     ],
     createOrUpdateProfile
   )
   .get(getProfiles)
   .delete(deleteProfile);
+router.route('/me').get(protect, getMyProfile);
 router.route('/user/:user_id').get(getUserProfile);
 router.route('/experience').put(
   [
@@ -47,7 +47,7 @@ router.route('/experience/:exp_id').delete(protect, deleteExperience);
 router.route('/education/:edu_id').delete(protect, deleteEducation);
 router.route('').put(
   [
-    auth,
+    protect,
     [
       // Validator check
       check('school', 'school is required'),

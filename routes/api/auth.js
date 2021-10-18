@@ -1,16 +1,12 @@
 const express = require('express');
 
-const { body, check } = require('express-validator');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const config = require('config');
+const { check } = require('express-validator');
 const { protect } = require('../../middleware/auth');
-const User = require('../../models/User');
 
 const { login, getMe, register } = require('../../controllers/auth');
 
 const router = express.Router();
-router.route('/').get(protect, getMe);
+router.route('/me').get(protect, getMe);
 router
   .route('/login')
   .post(
@@ -20,18 +16,16 @@ router
     ],
     login
   );
-router
-  .route('/register')
-  .post(
-    [
-      check('name', 'name is required!!!').not().isEmpty(),
-      check('email', 'Please include a valid email!').isEmail(),
-      check('password', 'Password is at least 6 characters!').isLength({
-        min: 6,
-      }),
-    ],
-    register
-  );
+router.route('/register').post(
+  [
+    check('name', 'name is required!!!').not().isEmpty(),
+    check('email', 'Please include a valid email!').isEmail(),
+    check('password', 'Password is at least 6 characters!').isLength({
+      min: 6,
+    }),
+  ],
+  register
+);
 // // @route   GET api/auth
 // // @desc    Auth route
 // // @access  public

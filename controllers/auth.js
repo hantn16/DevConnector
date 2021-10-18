@@ -1,15 +1,12 @@
-const express = require('express');
-const router = express.Router();
-const { body, validationResult } = require('express-validator');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const config = require('config');
-// const auth = require('../../middleware/auth');
+const { validationResult } = require('express-validator');
+const normalize = require('normalize-url');
+const gravatar = require('gravatar');
 const User = require('../models/User');
 const asyncHandler = require('../middleware/asyncHandler');
 const ErrorResponse = require('../utils/errorResponse');
+const validationResultHandler = require('../utils/validationResultHandler');
 
-// @route   GET /api/v2/auth/me
+// @route   GET /api/auth/me
 // @desc    Get user logged in
 // @access  Private
 exports.getMe = asyncHandler(async (req, res, next) => {
@@ -23,20 +20,19 @@ exports.getMe = asyncHandler(async (req, res, next) => {
 exports.login = asyncHandler(async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    // return next(new ErrorResponse('Validation Errors', 400));
-    return res.status(400).json({ errors: errors.array() });
+    return next(validationResultHandler(errors));
   }
   const { email, password } = req.body;
   //Check if email is registered
   const user = await User.findOne({ email });
   if (!user) {
-    return next(new ErrorResponse('Invalid Credentials', 404));
+    return next(new ErrorResponse('AuthError', 404, ['Invalid Credentials']));
   }
   //Check if password is matched
   const isMatch = await user.matchPassword(password);
   console.log(isMatch);
   if (!isMatch) {
-    return next(new ErrorResponse('Invalid Credentials', 404));
+    return next(new ErrorResponse('AuthError', 404, ['Invalid Credentials']));
   }
   //Return token
   sendTokenResponse(user, 200, res);
@@ -49,13 +45,15 @@ exports.register = asyncHandler(async (req, res, next) => {
   // Validation checks
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return next(validationResultHandler(errors));
   }
   // Check if email exists
   const { name, email, password } = req.body;
   let user = await User.findOne({ email });
   if (user) {
-    return next(new ErrorResponse('User already exists', 400));
+    return next(
+      new ErrorResponse('DuplicateKeyError', 400, ['User already exists'])
+    );
   }
   // Get user's gravatar
   const avatar = normalize(

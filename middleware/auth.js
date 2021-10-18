@@ -1,4 +1,3 @@
-const config = require('config');
 const jwt = require('jsonwebtoken');
 const ErrorResponse = require('../utils/errorResponse');
 
@@ -9,16 +8,26 @@ exports.protect = async (req, res, next) => {
     token = authorization.split(' ')[1];
   }
   // else if (req.cookies.token) {
-  //   token = req.cookies.token
+  //   token = req.cookies.token;
   // }
+  console.log('token', token);
   if (!token) {
-    return next(new ErrorResponse('Not authorized to access this route', 401));
+    return next(
+      new ErrorResponse('AuthorizeError', 401, [
+        'Not authorized to access this route',
+      ])
+    );
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(decoded);
     req.user = await User.findById(decoded.id);
-    next();
+    return next();
   } catch (err) {
-    return next(new ErrorResponse('Not authorized to access this route', 401));
+    return next(
+      new ErrorResponse('AuthorizeError', 401, [
+        'Not authorized to access this route',
+      ])
+    );
   }
 };

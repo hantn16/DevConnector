@@ -1,7 +1,4 @@
-const express = require('express');
-const router = express.Router();
-const { check, validationResult } = require('express-validator');
-const config = require('config');
+const { validationResult } = require('express-validator');
 const Profile = require('../models/Profile');
 const User = require('../models/User');
 const Post = require('../models/Post');
@@ -19,7 +16,9 @@ exports.getMyProfile = asyncHandler(async (req, res, next) => {
     ['name', 'avatar']
   );
   if (!profile) {
-    return next(new ErrorResponse('No profiles for you', 404));
+    return next(
+      new ErrorResponse('NotFoundError', 404, ['No profiles for you'])
+    );
   }
   res.status(200).json(profile);
 });
@@ -30,7 +29,7 @@ exports.getMyProfile = asyncHandler(async (req, res, next) => {
 exports.createOrUpdateProfile = asyncHandler(async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return next(validationResultHandler(errors));
   }
   const {
     website,
@@ -89,7 +88,7 @@ exports.getUserProfile = asyncHandler(async (req, res, next) => {
     user: req.params.user_id,
   }).populate('user', ['name', 'avatar']);
   if (!profile) {
-    return next(new ErrorResponse('Profile not found', 404));
+    return next(new ErrorResponse('NotFoundError', 404, ['Profile not found']));
   }
   res.json(profile);
 });
@@ -114,7 +113,7 @@ exports.updateExperience = asyncHandler(async (req, res, next) => {
   //Validator errors handling(if any)
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return next(validationResultHandler(errors));
   }
   // Build new experience
   const { title, company, location, from, to, current, description } = req.body;
@@ -130,7 +129,7 @@ exports.updateExperience = asyncHandler(async (req, res, next) => {
   // Update new experience
   const profile = await Profile.findOne({ user: req.user.id });
   if (!profile) {
-    return next(new ErrorResponse('Profile not found', 404));
+    return next(new ErrorResponse('NotFoundError', 404, ['Profile not found']));
   }
   profile.experience.unshift(newExp);
   await profile.save();
@@ -143,7 +142,7 @@ exports.updateExperience = asyncHandler(async (req, res, next) => {
 exports.deleteExperience = asyncHandler(async (req, res, next) => {
   const profile = await Profile.findOne({ user: req.user.id });
   if (!profile) {
-    return next(new ErrorResponse('Profile not found', 404));
+    return next(new ErrorResponse('NotFoundError', 404, ['Profile not found']));
   }
   // Get index of the experience to remove
   const expIndex = await profile.experience
@@ -162,7 +161,7 @@ exports.updateEducation = asyncHandler(async (req, res, next) => {
   //Validator errors handling(if any)
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return next(validationResultHandler(errors));
   }
   // Build new experience
   const { school, degree, fieldOfStudy, from, to, current, description } =
@@ -179,7 +178,7 @@ exports.updateEducation = asyncHandler(async (req, res, next) => {
   // Update new experience
   const profile = await Profile.findOne({ user: req.user.id });
   if (!profile) {
-    return next(new ErrorResponse('Profile not found', 404));
+    return next(new ErrorResponse('NotFoundError', 404, ['Profile not found']));
   }
   profile.education.unshift(newEdu);
   await profile.save();
@@ -192,7 +191,7 @@ exports.updateEducation = asyncHandler(async (req, res, next) => {
 exports.deleteEducation = asyncHandler(async (req, res, next) => {
   const profile = await Profile.findOne({ user: req.user.id });
   if (!profile) {
-    return next(new ErrorResponse('Profile not found', 404));
+    return next(new ErrorResponse('NotFoundError', 404, ['Profile not found']));
   }
   // Get index of the education to remove
   const removeIndex = await profile.education
@@ -214,13 +213,13 @@ exports.getGithubRepos = asyncHandler(async (req, res, next) => {
     );
     const headers = {
       'user-agent': 'node.js',
-      Authorization: `token ${config.get('githubToken')}`, //fix this
+      Authorization: `token ${process.env.GITHUB_TOKEN}`,
     };
     const gitHubResponse = await axios.get(uri, { headers });
     return res.json(gitHubResponse.data);
   } catch (err) {
-    return next(new ErrorResponse('No Github profile found', 404));
+    return next(
+      new ErrorResponse('NotFoundError', 404, ['No Github profile found'])
+    );
   }
 });
-
-module.exports = router;

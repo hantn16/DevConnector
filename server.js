@@ -5,8 +5,6 @@ const path = require('path');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 
-const app = express();
-
 // Load routes
 const auth = require('./routes/api/auth');
 const users = require('./routes/api/users');
@@ -15,6 +13,8 @@ const posts = require('./routes/api/posts');
 //Connect database
 connectDB();
 
+const app = express();
+const PORT = process.env.PORT || 5000;
 // Init Middleware
 app.use(express.json({ extended: false }));
 
@@ -36,6 +36,14 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+const server = app.listen(PORT, () =>
+  console.log(
+    `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold
+  )
+);
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err, promise) => {
+  console.log(`Error: ${err.message}`.red);
+  //Close server & exit process
+  server.close(() => process.exit(1));
+});

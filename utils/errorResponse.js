@@ -1,7 +1,8 @@
 class ErrorResponse extends Error {
-  constructor(message, statusCode) {
-    super(message);
-    this.msg = message;
+  constructor(name, statusCode, errorMsgArr) {
+    console.log(Array.isArray(errorMsgArr));
+    super(name);
+    this.errors = errorMsgArr.map((errorMsg) => ({ msg: errorMsg }));
     this.statusCode = statusCode;
   }
 }
