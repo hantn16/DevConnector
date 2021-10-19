@@ -3,6 +3,7 @@ const User = require('../models/User');
 const Post = require('../models/Post');
 const asyncHandler = require('../middleware/asyncHandler');
 const ErrorResponse = require('../utils/errorResponse');
+const validationResultHandler = require('../utils/validationResultHandler');
 
 // @route   POST api/posts
 // @desc    Create a post
@@ -28,6 +29,7 @@ exports.createPost = asyncHandler(async (req, res, next) => {
 // @access  Public
 exports.getPosts = asyncHandler(async (req, res, next) => {
   const posts = await Post.find().sort({ date: -1 }); //-1 means descending
+  console.log(posts);
   res.json(posts);
 });
 

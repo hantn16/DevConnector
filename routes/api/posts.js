@@ -21,17 +21,17 @@ router
     [check('text', 'Text is required').not().isEmpty()],
     createPost
   )
-  .get(protect, getPosts);
+  .get(getPosts);
 router.route('/:id').get(protect, getPost).delete(protect, deletePost);
 router.route('/like/:id').put(protect, like);
 router.route('/unlike/:id').put(protect, unlike);
 router
-  .route('/comment/:post_id')
+  .route('/:post_id/comment')
   .put(
     protect,
     [check('text', 'Text is required').not().isEmpty()],
     createComment
   );
-router.route('/comment/:post_id/:comment_id').delete(protect, deleteComment);
+router.route('/:post_id/comment/:comment_id').delete(protect, deleteComment);
 
 module.exports = router;

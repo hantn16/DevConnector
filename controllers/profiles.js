@@ -6,6 +6,7 @@ const normalize = require('normalize-url');
 const axios = require('axios');
 const asyncHandler = require('../middleware/asyncHandler');
 const ErrorResponse = require('../utils/errorResponse');
+const validationResultHandler = require('../utils/validationResultHandler');
 
 // @route   GET api/profile/me
 // @desc    Get profile of current user
