@@ -17,7 +17,7 @@ export const loadUser = () => async (dispatch) => {
     if (!localStorage.token) {
       return dispatch({ type: AUTH_ERR });
     }
-    const res = await api.get('/auth');
+    const res = await api.get('/auth/me');
     dispatch({
       type: USER_LOADED,
       payload: res.data,
@@ -81,7 +81,7 @@ export const register =
 export const login = (email, password) => async (dispatch) => {
   try {
     const body = { email, password };
-    const res = await api.post('/auth', body);
+    const res = await api.post('/auth/login', body);
     dispatch({
       type: LOGIN_SUCCESS,
       payload: res.data,

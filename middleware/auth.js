@@ -6,11 +6,9 @@ exports.protect = async (req, res, next) => {
   const authorization = req.headers.authorization;
   if (authorization && authorization.startsWith('Bearer')) {
     token = authorization.split(' ')[1];
+  } else if (req.cookies.token) {
+    token = req.cookies.token;
   }
-  // else if (req.cookies.token) {
-  //   token = req.cookies.token;
-  // }
-  console.log('token', token);
   if (!token) {
     return next(
       new ErrorResponse('AuthorizeError', 401, [

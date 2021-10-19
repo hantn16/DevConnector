@@ -88,8 +88,5 @@ const sendTokenResponse = (user, statusCode, res) => {
   if (process.env.NODE_ENV === 'production') {
     option.secure = true;
   }
-  res
-    .status(statusCode)
-    .cookie('token', token, option)
-    .json({ success: true, token });
+  res.status(statusCode).cookie('token', token, option).json({ token });
 };
